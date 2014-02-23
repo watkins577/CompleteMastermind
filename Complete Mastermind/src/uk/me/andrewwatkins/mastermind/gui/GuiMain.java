@@ -27,7 +27,7 @@ public class GuiMain implements MouseListener {
 	private static final int DEFAULT_YSIZE = 4;
 	private static final int DEFAULT_COLOURSIZE = 6;
 	
-	private static final int MAX_XSIZE = 15;
+	private static final int MAX_XSIZE = 14;
 	private static final int MAX_YSIZE = 8;
 	private static final int MAX_COLOURSIZE = 6;
 	
