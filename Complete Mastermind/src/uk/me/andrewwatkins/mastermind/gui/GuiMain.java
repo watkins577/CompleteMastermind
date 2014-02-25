@@ -15,6 +15,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 import uk.me.andrewwatkins.mastermind.data.ColourCode;
+import uk.me.andrewwatkins.mastermind.data.MastermindHandler;
 
 public class GuiMain implements MouseListener {
 	
@@ -48,6 +49,8 @@ public class GuiMain implements MouseListener {
 	private JButton readyButton;
 	private ColourCode curColour = ColourCode.EMPTY;
 	private int curColumn = 0;
+	
+	private MastermindHandler mmHandler;
 	
 	//Frame variables
 	private JFrame frame;
@@ -221,6 +224,8 @@ public class GuiMain implements MouseListener {
 			frame.add(mastermindPanel);
 			
 			frame.repaint();
+			
+			mmHandler = new MastermindHandler(this.ySize, this.colourSize, this.codeSlots);
 		}
 		
 		
@@ -236,7 +241,6 @@ public class GuiMain implements MouseListener {
 		}
 		
 		if (comp == readyButton) {
-			//This needs to check for matchingness
 			if (slots.isColumnFull(this.curColumn)) {
 				curColumn++;
 				slots.setColumnCovered(curColumn, false);
