@@ -134,4 +134,8 @@ public class SlotBoard extends JPanel {
 		}
 		this.repaint();
 	}
+	
+	public ColourSlot[] getColumn(int i) {
+		return slots[i];
+	}
 }

@@ -63,13 +63,23 @@ public class MarkSlotPiece extends JPanel {
 			MarkSlot slot = markslots[i];
 			g2d.setColor(slot.getColour() == MarkSlot.EMPTY ? Color.DARK_GRAY : (slot.getColour() == MarkSlot.WHITE ? Color.WHITE : Color.BLACK));
 			g2d.fill(slot);
-			g2d.setColor(Color.BLACK);
+			g2d.setColor(Color.GRAY);
 			g2d.draw(slot);
 		}
 	}
 	
 	public int getHeight() {
 		return height;
+	}
+
+	public void setSlots(int poscol, int col) {
+		for (int i = 0; i < poscol; i++) {
+			markslots[i].setColour(MarkSlot.BLACK);
+		}
+		
+		for (int i = poscol; i < col+poscol; i++) {
+			markslots[i].setColour(MarkSlot.WHITE);
+		}
 	}
 
 }

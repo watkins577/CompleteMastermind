@@ -242,6 +242,9 @@ public class GuiMain implements MouseListener {
 		
 		if (comp == readyButton) {
 			if (slots.isColumnFull(this.curColumn)) {
+				mmHandler.setGuess(slots.getColumn(curColumn));
+				mmHandler.compare(markslots, curColumn);
+				
 				curColumn++;
 				slots.setColumnCovered(curColumn, false);
 			}

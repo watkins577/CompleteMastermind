@@ -5,9 +5,11 @@ import java.util.ArrayList;
 public class CodeObject {
 	
 	private ArrayList<ColourCode> code = new ArrayList<ColourCode>();
+	private ArrayList<Boolean> marks = new ArrayList<Boolean>();
 	
 	public void addColour(ColourCode colour) {
 		code.add(colour);
+		marks.add(false);
 	}
 	
 	public ColourCode getColour(int i) {
@@ -49,6 +51,20 @@ public class CodeObject {
 	
 	public int length() {
 		return code.size();
+	}
+
+	public void mark(int i) {
+		marks.set(i, true);
+	}
+	
+	public void reset() {
+		for (int i = 0; i < marks.size(); i++) {
+			marks.set(i, false);
+		}
+	}
+
+	public boolean isMarked(int i) {
+		return marks.get(i);
 	}
 	
 }

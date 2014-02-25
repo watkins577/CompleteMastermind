@@ -53,4 +53,8 @@ public class MarkSlotBoard extends JPanel {
 		return markpieces[0].getHeight();
 	}
 
+	public void setSlots(int column, int poscol, int col) {
+		markpieces[column].setSlots(poscol, col);
+	}
+
 }
