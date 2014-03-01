@@ -30,7 +30,7 @@ public class GuiMain implements MouseListener {
 	
 	private static final int MAX_XSIZE = 14;
 	private static final int MAX_YSIZE = 8;
-	private static final int MAX_COLOURSIZE = 6;
+	private static final int MAX_COLOURSIZE = 12;
 	
 	//Game selection variables
 	private JSpinner xSizeSpinner;
@@ -100,7 +100,7 @@ public class GuiMain implements MouseListener {
 		int baseYPos = 50;
 		
 		int yPos = baseYPos;
-		JLabel xSizeLabel = new JLabel("Amount of Guesses");
+		JLabel xSizeLabel = new JLabel("Number of Guesses");
 		xSizeSpinner = new JSpinner(new SpinnerNumberModel(DEFAULT_XSIZE, 1, MAX_XSIZE, 1));
 		xSizeLabel.setLabelFor(xSizeSpinner);
 		
@@ -124,7 +124,7 @@ public class GuiMain implements MouseListener {
 		
 		yPos += ySizeLabel.getPreferredSize().height + 10;
 		
-		JLabel colourSizeLabel = new JLabel("Amount of Colours");
+		JLabel colourSizeLabel = new JLabel("Number of Colours");
 		colourSizeSpinner = new JSpinner(new SpinnerNumberModel(DEFAULT_COLOURSIZE, 1, MAX_COLOURSIZE, 1));
 		colourSizeLabel.setLabelFor(colourSizeSpinner);
 		
