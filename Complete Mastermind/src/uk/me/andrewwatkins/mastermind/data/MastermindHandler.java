@@ -3,6 +3,7 @@ package uk.me.andrewwatkins.mastermind.data;
 import java.util.Random;
 
 import uk.me.andrewwatkins.mastermind.gui.ColourSlot;
+import uk.me.andrewwatkins.mastermind.gui.GuiMain;
 import uk.me.andrewwatkins.mastermind.gui.MarkSlotBoard;
 import uk.me.andrewwatkins.mastermind.gui.SlotBoard;
 
@@ -18,15 +19,27 @@ public class MastermindHandler {
 	private SlotBoard codeSlots;
 
 	private Random random;
+
+	private GuiMain guimain;
+
+	private boolean guessing;
 	
-	public MastermindHandler(int codeLength, int colourLength, SlotBoard codeSlots) {
+	public MastermindHandler(GuiMain guiMain, int codeLength, int colourLength, SlotBoard codeSlots, boolean guessing) {
 		this.codeLength = codeLength;
 		this.colourLength = colourLength;
 		this.codeSlots = codeSlots;
 		
+		this.guimain = guiMain;
+		
+		this.guessing = guessing;
+		
 		this.random = new Random();
 		
-		generateCode();
+		if (guessing) {
+			
+		} else {
+			generateCode();
+		}
 	}
 
 	private void generateCode() {
@@ -82,5 +95,8 @@ public class MastermindHandler {
 		markslots.setSlots(curColumn, poscol, col);
 		
 		markslots.repaint();
+		
+		this.guimain.checkWin(poscol);
 	}
+	
 }

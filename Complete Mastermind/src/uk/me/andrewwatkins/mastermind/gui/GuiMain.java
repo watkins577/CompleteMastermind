@@ -3,10 +3,13 @@ package uk.me.andrewwatkins.mastermind.gui;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -17,7 +20,7 @@ import javax.swing.SpinnerNumberModel;
 import uk.me.andrewwatkins.mastermind.data.ColourCode;
 import uk.me.andrewwatkins.mastermind.data.MastermindHandler;
 
-public class GuiMain implements MouseListener {
+public class GuiMain implements MouseListener, ComponentListener {
 	
 	//Dimension constants
 	private static final int PREF_WIDTH = 800;
@@ -28,18 +31,21 @@ public class GuiMain implements MouseListener {
 	private static final int DEFAULT_YSIZE = 4;
 	private static final int DEFAULT_COLOURSIZE = 6;
 	
-	private static final int MAX_XSIZE = 14;
-	private static final int MAX_YSIZE = 8;
-	private static final int MAX_COLOURSIZE = 12;
+	//Game size variables
+	private int maxXSize = 14;
+	private int maxYSize = 8;
+	private int maxColourSize = 12;
 	
 	//Game selection variables
 	private JSpinner xSizeSpinner;
 	private JSpinner ySizeSpinner;
 	private JSpinner colourSizeSpinner;
+	private JCheckBox codebreakerCheckbox;
 	private JButton startButton;
 	private int xSize;
 	private int ySize;
 	private int colourSize;
+	private boolean guesser;
 	
 	//Game panel variables
 	private MarkSlotBoard markslots;
@@ -55,6 +61,7 @@ public class GuiMain implements MouseListener {
 	//Frame variables
 	private JFrame frame;
 	private JPanel menuPanel;
+	private JPanel mastermindPanel;
 	
 	
 
@@ -67,7 +74,6 @@ public class GuiMain implements MouseListener {
 		
 		frame.add(menuPanel);
 		
-		frame.pack();
 		frame.setVisible(true);
 	}
 
@@ -77,14 +83,29 @@ public class GuiMain implements MouseListener {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		int xPos = (screenSize.width - PREF_WIDTH)/2;
-		int yPos = (screenSize.height - PREF_HEIGHT)/2;
 		
-		frame.setMinimumSize(new Dimension(PREF_WIDTH, PREF_HEIGHT));
+		
+		this.maxXSize = (Math.min(1600, screenSize.width)-300)/45;
+		this.maxYSize = (Math.min(900, screenSize.height)-300)/55;
+		
+		frame.setMaximumSize(new Dimension(this.maxXSize, this.maxYSize));
 		frame.setPreferredSize(new Dimension(PREF_WIDTH, PREF_HEIGHT));
-		frame.setLocation(xPos, yPos);
 		frame.setLayout(null);
+		
+		frame.pack();
+		
+		reposition(frame);
+		
+		frame.addComponentListener(this);
 		return frame;
+	}
+	
+	private void reposition(JFrame frame) {
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		int xPos = (screenSize.width - frame.getSize().width)/2;
+		int yPos = (screenSize.height - frame.getSize().height)/2;
+		
+		frame.setLocation(xPos, yPos);
 	}
 
 
@@ -96,12 +117,16 @@ public class GuiMain implements MouseListener {
 	}
 	
 	private void createSelectionPanel(JPanel panel) {
+		xSizeSpinner = null;
+		ySizeSpinner = null;
+		colourSizeSpinner = null;
+		
 		int baseXPos = 50;
 		int baseYPos = 50;
 		
 		int yPos = baseYPos;
 		JLabel xSizeLabel = new JLabel("Number of Guesses");
-		xSizeSpinner = new JSpinner(new SpinnerNumberModel(DEFAULT_XSIZE, 1, MAX_XSIZE, 1));
+		xSizeSpinner = new JSpinner(new SpinnerNumberModel(DEFAULT_XSIZE, 1, maxXSize, 1));
 		xSizeLabel.setLabelFor(xSizeSpinner);
 		
 		this.setPosition(xSizeLabel, baseXPos, yPos);
@@ -113,7 +138,7 @@ public class GuiMain implements MouseListener {
 		yPos += xSizeLabel.getPreferredSize().height + 10;
 		
 		JLabel ySizeLabel = new JLabel("Length of Code");
-		ySizeSpinner = new JSpinner(new SpinnerNumberModel(DEFAULT_YSIZE, 1, MAX_YSIZE, 1));
+		ySizeSpinner = new JSpinner(new SpinnerNumberModel(DEFAULT_YSIZE, 1, maxYSize, 1));
 		ySizeLabel.setLabelFor(ySizeSpinner);
 		
 		this.setPosition(ySizeLabel, baseXPos, yPos);
@@ -125,7 +150,7 @@ public class GuiMain implements MouseListener {
 		yPos += ySizeLabel.getPreferredSize().height + 10;
 		
 		JLabel colourSizeLabel = new JLabel("Number of Colours");
-		colourSizeSpinner = new JSpinner(new SpinnerNumberModel(DEFAULT_COLOURSIZE, 1, MAX_COLOURSIZE, 1));
+		colourSizeSpinner = new JSpinner(new SpinnerNumberModel(DEFAULT_COLOURSIZE, 1, maxColourSize, 1));
 		colourSizeLabel.setLabelFor(colourSizeSpinner);
 		
 		this.setPosition(colourSizeLabel, baseXPos, yPos);
@@ -135,6 +160,18 @@ public class GuiMain implements MouseListener {
 		panel.add(colourSizeSpinner);
 		
 		yPos += colourSizeLabel.getPreferredSize().height + 10;
+		
+		JLabel codebreakerLabel = new JLabel("Computer as Codebreaker?");
+		codebreakerCheckbox = new JCheckBox();
+		codebreakerLabel.setLabelFor(codebreakerCheckbox);
+		
+		this.setPosition(codebreakerLabel, baseXPos, yPos);
+		this.setPosition(codebreakerCheckbox, codebreakerLabel.getPreferredSize().width + baseXPos + 5, yPos);
+		
+		panel.add(codebreakerLabel);
+		panel.add(codebreakerCheckbox);
+		
+		yPos += codebreakerLabel.getPreferredSize().height + 10;
 		
 		startButton = new JButton("Start");
 		this.setPosition(startButton, baseXPos, yPos);
@@ -155,6 +192,10 @@ public class GuiMain implements MouseListener {
 		
 		slots = new SlotBoard(xSize, ySize, 0, markslots.getHeight()+1, true);
 		
+		if (this.guesser) {
+			slots.setColumnCovered(0, true);
+		}
+		
 		panel.add(slots);
 		
 		codeSlots = new SlotBoard(1, ySize, (xSize*ColourSlot.WIDTH)+20, markslots.getHeight()+1, false);
@@ -170,6 +211,12 @@ public class GuiMain implements MouseListener {
 		this.setPosition(readyButton, (colourSize*ColourSlot.WIDTH)+20, markslots.getHeight()+1+(ySize*ColourSlot.HEIGHT)+20);
 		
 		panel.add(readyButton);
+		
+		panel.setBounds(0, 0, 1600, 900);
+		
+		frame.setPreferredSize(new Dimension(Math.max(PREF_WIDTH, Math.min(this.maxXSize*45+300, (this.xSize+1)*45+100)), Math.max(PREF_HEIGHT, Math.min(this.maxXSize*55+300, this.ySize*55+200))));
+		frame.pack();
+		this.reposition(frame);
 		
 		slots.addMouseListener(this);
 		picker.addMouseListener(this);
@@ -213,10 +260,13 @@ public class GuiMain implements MouseListener {
 			this.xSize = (int) xSizeSpinner.getModel().getValue();
 			this.ySize = (int) ySizeSpinner.getModel().getValue();
 			this.colourSize = (int) colourSizeSpinner.getModel().getValue();
+			this.guesser = codebreakerCheckbox.isSelected();
+			
+			System.out.println(this.guesser);
 			
 			frame.remove(menuPanel);
 			
-			JPanel mastermindPanel = initialisePanel();
+			mastermindPanel = initialisePanel();
 			createMastermindPanel(mastermindPanel);
 			
 			mastermindPanel.setLayout(null);
@@ -225,7 +275,9 @@ public class GuiMain implements MouseListener {
 			
 			frame.repaint();
 			
-			mmHandler = new MastermindHandler(this.ySize, this.colourSize, this.codeSlots);
+			mmHandler = new MastermindHandler(this, this.ySize, this.colourSize, this.codeSlots, this.guesser);
+			
+			startButton.removeMouseListener(this);
 		}
 		
 		
@@ -250,6 +302,62 @@ public class GuiMain implements MouseListener {
 			}
 			return;
 		}
+	}
+	
+	public void checkWin(int poscol) {
+		if (poscol == this.ySize) {
+			frame.remove(this.mastermindPanel);
+			
+			reset();
+			
+			frame.repaint();
+		}
+	}
+
+
+	@Override
+	public void componentHidden(ComponentEvent e) {
+		
+	}
+
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		
+	}
+
+
+	@Override
+	public void componentResized(ComponentEvent e) {
+		frame.repaint();
+		
+		if (mastermindPanel != null) {
+			mastermindPanel.repaint();
+			this.picker.repaint();
+			this.readyButton.repaint();
+		}
+	}
+
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+		
+	}
+	
+	public void reset() {
+		menuPanel = null;
+		mastermindPanel = null;
+		
+		menuPanel = initialisePanel();
+		createSelectionPanel(menuPanel);
+		
+		frame.add(menuPanel);
+		
+		slots.removeMouseListener(this);
+		picker.removeMouseListener(this);
+		readyButton.removeMouseListener(this);
+		
+		this.curColumn = 0;
 	}
 
 }
