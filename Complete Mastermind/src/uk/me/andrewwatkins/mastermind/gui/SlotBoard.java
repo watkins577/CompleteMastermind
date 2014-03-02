@@ -84,13 +84,20 @@ public class SlotBoard extends JPanel {
 		repaint();
 	}
 	
+	public void setColumnLocked(int column, boolean locked) {
+		if (column < 0) {
+			return;
+		}
+		for (int i = 0; i < ySize; i++) {
+			ColourSlot slot;
+			slot = slots[column][i];
+			slot.setLocked(locked);
+		}
+	}
+	
 	public void setColumnCovered(int column, boolean covered) {
 		for (int i = 0; i < ySize; i++) {
 			ColourSlot slot;
-			if (column-1 > -1) {
-				slot = slots[column-1][i];
-				slot.setLocked(true);
-			}
 			slot = slots[column][i];
 			slot.setCovered(covered);
 		}

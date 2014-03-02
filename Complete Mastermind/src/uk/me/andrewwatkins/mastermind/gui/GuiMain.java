@@ -200,6 +200,12 @@ public class GuiMain implements MouseListener, ComponentListener {
 		
 		codeSlots = new SlotBoard(1, ySize, (xSize*ColourSlot.WIDTH)+20, markslots.getHeight()+1, false);
 		
+		if (this.guesser) {
+			codeSlots.addMouseListener(this);
+		} else {
+			slots.addMouseListener(this);
+		}
+		
 		panel.add(codeSlots);
 		
 		picker = new ColourPicker(colourSize, 0, markslots.getHeight()+1+(ySize*ColourSlot.HEIGHT)+20);
@@ -218,7 +224,6 @@ public class GuiMain implements MouseListener, ComponentListener {
 		frame.pack();
 		this.reposition(frame);
 		
-		slots.addMouseListener(this);
 		picker.addMouseListener(this);
 		readyButton.addMouseListener(this);
 	}
@@ -262,8 +267,6 @@ public class GuiMain implements MouseListener, ComponentListener {
 			this.colourSize = (int) colourSizeSpinner.getModel().getValue();
 			this.guesser = codebreakerCheckbox.isSelected();
 			
-			System.out.println(this.guesser);
-			
 			frame.remove(menuPanel);
 			
 			mastermindPanel = initialisePanel();
@@ -292,15 +295,33 @@ public class GuiMain implements MouseListener, ComponentListener {
 			return;
 		}
 		
+		if (comp == codeSlots) {
+			codeSlots.setColour(mouse.getX(), mouse.getY(), curColour);
+			return;
+		}
+		
 		if (comp == readyButton) {
-			if (slots.isColumnFull(this.curColumn)) {
+			if (guesser && codeSlots.isColumnFull(0)) {
+				codeSlots.setColumnLocked(0, true);
+				
+				mmHandler.setCode(codeSlots.getColumn(0));
+				mmHandler.startGuessing();
+				
+				mastermindPanel.remove(readyButton);
+				readyButton.removeMouseListener(this);
+				
+				frame.repaint();
+				return;
+			}
+			if (!guesser && slots.isColumnFull(this.curColumn)) {
 				mmHandler.setGuess(slots.getColumn(curColumn));
 				mmHandler.compare(markslots, curColumn);
 				
 				curColumn++;
 				slots.setColumnCovered(curColumn, false);
+				slots.setColumnLocked(curColumn-1, true);
+				return;
 			}
-			return;
 		}
 	}
 	

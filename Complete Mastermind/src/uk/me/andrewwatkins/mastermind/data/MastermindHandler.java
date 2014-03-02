@@ -1,5 +1,6 @@
 package uk.me.andrewwatkins.mastermind.data;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import uk.me.andrewwatkins.mastermind.gui.ColourSlot;
@@ -24,6 +25,8 @@ public class MastermindHandler {
 
 	private boolean guessing;
 	
+	private ArrayList<CodeObject> possibleGuesses;
+	
 	public MastermindHandler(GuiMain guiMain, int codeLength, int colourLength, SlotBoard codeSlots, boolean guessing) {
 		this.codeLength = codeLength;
 		this.colourLength = colourLength;
@@ -35,9 +38,7 @@ public class MastermindHandler {
 		
 		this.random = new Random();
 		
-		if (guessing) {
-			
-		} else {
+		if (!guessing) {
 			generateCode();
 		}
 	}
@@ -61,6 +62,14 @@ public class MastermindHandler {
 		
 		for (int i = 0; i < column.length; i++) {
 			guess.addColour(column[i].getColourCode());
+		}
+	}
+	
+	public void setCode(ColourSlot[] column) {
+		code = new CodeObject();
+		
+		for (int i = 0; i < column.length; i++) {
+			code.addColour(column[i].getColourCode());
 		}
 	}
 
@@ -97,6 +106,44 @@ public class MastermindHandler {
 		markslots.repaint();
 		
 		this.guimain.checkWin(poscol);
+	}
+
+	public void startGuessing() {
+		generatePossibleGuesses();
+	}
+	
+	private void generatePossibleGuesses() {
+		this.possibleGuesses = generatePossibleGuesses(generateInitialCodes(), this.codeLength-1);
+		
+		System.out.println(this.possibleGuesses.size());
+	}
+	
+	private ArrayList<CodeObject> generateInitialCodes() {
+		ArrayList<CodeObject> initCodes = new ArrayList<CodeObject>();
+		for (int i = 0; i < this.colourLength; i++) {
+			CodeObject newCode = new CodeObject();
+			newCode.addColour(ColourCode.values()[i+1]);
+			initCodes.add(newCode);
+		}
+		return initCodes;
+	}
+
+	private ArrayList<CodeObject> generatePossibleGuesses(ArrayList<CodeObject> curCodes, int codeLength) {
+		System.out.println(curCodes.size());
+		if (codeLength == 0) {
+			return curCodes;
+		}
+		ArrayList<CodeObject> nextCodes = new ArrayList<CodeObject>();
+		for (int i = 0; i < curCodes.size(); i++) {
+			for (int j = 0; j < this.colourLength; j++) {
+				CodeObject curCode = curCodes.get(i).clone();
+				
+				curCode.addColour(ColourCode.values()[j+1]);
+				nextCodes.add(curCode);
+			}
+		}
+		curCodes = null;
+		return generatePossibleGuesses(nextCodes, codeLength-1);
 	}
 	
 }

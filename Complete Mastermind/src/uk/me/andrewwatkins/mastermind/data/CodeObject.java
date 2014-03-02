@@ -67,4 +67,15 @@ public class CodeObject {
 		return marks.get(i);
 	}
 	
+	@Override
+	public CodeObject clone() {
+		CodeObject cloneCode = new CodeObject();
+		
+		for (int i = 0; i < length(); i++) {
+			cloneCode.addColour(this.getColour(i));
+		}
+		
+		return cloneCode;
+	}
+	
 }
