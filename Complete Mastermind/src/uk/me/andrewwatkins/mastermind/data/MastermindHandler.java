@@ -23,9 +23,10 @@ public class MastermindHandler {
 
 	private GuiMain guimain;
 
-	private boolean guessing;
-	
 	private ArrayList<CodeObject> possibleGuesses;
+	private ArrayList<ColourCode> possibleColours;
+
+	private boolean guessing;
 	
 	public MastermindHandler(GuiMain guiMain, int codeLength, int colourLength, SlotBoard codeSlots, boolean guessing) {
 		this.codeLength = codeLength;
@@ -80,6 +81,7 @@ public class MastermindHandler {
 		for (int i = 0; i < guess.length(); i++) {
 			if (guess.getColour(i) == code.getColour(i)) {
 				code.mark(i);
+				guess.mark(i);
 				poscol++;
 			}
 		}
@@ -90,9 +92,10 @@ public class MastermindHandler {
 					if (i == j) {
 						break;
 					}
-					if (code.isMarked(j)) {
+					if (code.isMarked(j) || guess.isMarked(i)) {
 						continue;
 					}
+					guess.mark(i);
 					code.mark(j);
 					col++;
 				}
@@ -106,18 +109,59 @@ public class MastermindHandler {
 		markslots.repaint();
 		
 		this.guimain.checkWin(poscol);
+		
+		if (this.guessing) {
+			this.guimain.slots.setColumnCovered(this.guimain.curColumn, false);
+			this.guimain.slots.repaint();
+			if (!this.guimain.won && this.guimain.curColumn < this.guimain.xSize-1) {
+				this.guimain.curColumn++;
+				nextGuess();
+			}
+		}
 	}
 
 	public void startGuessing() {
+		generateIntialPossibleColours();
 		generatePossibleGuesses();
 	}
 	
-	private void generatePossibleGuesses() {
-		this.possibleGuesses = generatePossibleGuesses(generateInitialCodes(), this.codeLength-1);
-		
-		System.out.println(this.possibleGuesses.size());
+	private void generateIntialPossibleColours() {
+		this.possibleColours = new ArrayList<ColourCode>();
+		for (int i = 1; i <= this.colourLength; i++) {
+			this.possibleColours.add(ColourCode.values()[i]);
+		}
 	}
 	
+	private void nextGuess() {
+		randomGuess();
+	}
+
+	private void generatePossibleGuesses() {
+		if (this.codeLength <= 4 && this.possibleColours.size() <= 6) {
+			this.possibleGuesses = generatePossibleGuesses(generateInitialCodes(), this.codeLength-1);
+			
+			randomGuess();
+		} else {
+			randomGuess();
+		}
+	}
+	
+	private void knuthGuess() {
+		
+	}
+
+	private void randomGuess() {
+		this.guess = new CodeObject();
+		ColourCode[] randGuess = new ColourCode[this.codeLength];
+		for (int i = 0; i < this.codeLength; i++) {
+			this.guess.addColour(ColourCode.values()[random.nextInt(this.colourLength)+1]);
+			randGuess[i] = this.guess.getColour(i);
+		}
+		
+		this.guimain.slots.setColumn(this.guimain.curColumn, randGuess);
+		compare(guimain.markslots, guimain.curColumn);
+	}
+
 	private ArrayList<CodeObject> generateInitialCodes() {
 		ArrayList<CodeObject> initCodes = new ArrayList<CodeObject>();
 		for (int i = 0; i < this.colourLength; i++) {
@@ -129,7 +173,6 @@ public class MastermindHandler {
 	}
 
 	private ArrayList<CodeObject> generatePossibleGuesses(ArrayList<CodeObject> curCodes, int codeLength) {
-		System.out.println(curCodes.size());
 		if (codeLength == 0) {
 			return curCodes;
 		}

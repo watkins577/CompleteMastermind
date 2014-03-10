@@ -61,7 +61,7 @@ public class MarkSlotPiece extends JPanel {
 		Graphics2D g2d = (Graphics2D) g;
 		for (int i = 0; i < size; i++) {
 			MarkSlot slot = markslots[i];
-			g2d.setColor(slot.getColour() == MarkSlot.EMPTY ? Color.DARK_GRAY : (slot.getColour() == MarkSlot.WHITE ? Color.WHITE : Color.BLACK));
+			g2d.setColor(slot.getColour() == MarkSlot.EMPTY ? Color.LIGHT_GRAY : (slot.getColour() == MarkSlot.WHITE ? Color.WHITE : Color.BLACK));
 			g2d.fill(slot);
 			g2d.setColor(Color.GRAY);
 			g2d.draw(slot);

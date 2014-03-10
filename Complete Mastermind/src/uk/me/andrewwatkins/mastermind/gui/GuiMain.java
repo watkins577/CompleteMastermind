@@ -42,19 +42,19 @@ public class GuiMain implements MouseListener, ComponentListener {
 	private JSpinner colourSizeSpinner;
 	private JCheckBox codebreakerCheckbox;
 	private JButton startButton;
-	private int xSize;
+	public int xSize;
 	private int ySize;
 	private int colourSize;
 	private boolean guesser;
 	
 	//Game panel variables
-	private MarkSlotBoard markslots;
-	private SlotBoard slots;
+	public MarkSlotBoard markslots;
+	public SlotBoard slots;
 	private SlotBoard codeSlots;
 	private ColourPicker picker;
 	private JButton readyButton;
 	private ColourCode curColour = ColourCode.EMPTY;
-	private int curColumn = 0;
+	public int curColumn = 0;
 	
 	private MastermindHandler mmHandler;
 	
@@ -62,6 +62,8 @@ public class GuiMain implements MouseListener, ComponentListener {
 	private JFrame frame;
 	private JPanel menuPanel;
 	private JPanel mastermindPanel;
+	
+	public boolean won = false;
 	
 	
 
@@ -327,9 +329,8 @@ public class GuiMain implements MouseListener, ComponentListener {
 	
 	public void checkWin(int poscol) {
 		if (poscol == this.ySize) {
-			frame.remove(this.mastermindPanel);
-			
-			reset();
+			this.won = true;
+			codeSlots.setColumnCovered(0, false);
 			
 			frame.repaint();
 		}
