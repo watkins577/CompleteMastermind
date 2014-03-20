@@ -222,7 +222,7 @@ public class GuiMain implements MouseListener, ComponentListener {
 		
 		panel.setBounds(0, 0, 1600, 900);
 		
-		frame.setPreferredSize(new Dimension(Math.max(PREF_WIDTH, Math.min(this.maxXSize*45+300, (this.xSize+1)*45+100)), Math.max(PREF_HEIGHT, Math.min(this.maxXSize*55+300, this.ySize*55+200))));
+		frame.setPreferredSize(new Dimension(Math.min(this.maxXSize*45+300, (this.xSize+1)*45+100), Math.min(this.maxXSize*55+300, this.ySize*55+200)));
 		frame.pack();
 		this.reposition(frame);
 		

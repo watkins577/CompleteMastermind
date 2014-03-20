@@ -54,8 +54,6 @@ public class MastermindHandler {
 		codeSlots.setColumnCovered(0, true);
 		
 		codeSlots.repaint();
-		
-		System.out.println(code);
 	}
 
 	public void setGuess(ColourSlot[] column) {
@@ -147,7 +145,8 @@ public class MastermindHandler {
 	}
 	
 	private void knuthGuess() {
-		
+		//minimize the maximum possible guesses
+		//
 	}
 
 	private void randomGuess() {

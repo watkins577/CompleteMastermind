@@ -4,7 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class MarkSlotPiece extends JPanel {
@@ -65,6 +69,15 @@ public class MarkSlotPiece extends JPanel {
 			g2d.fill(slot);
 			g2d.setColor(Color.GRAY);
 			g2d.draw(slot);
+			BufferedImage image;
+			System.out.println(new File("src\\resources\\markslot.png").getAbsolutePath());
+			try {
+				image = ImageIO.read(new File("src\\resources\\markslot.png"));
+				g2d.drawImage(image, slot.x, slot.y, null);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
