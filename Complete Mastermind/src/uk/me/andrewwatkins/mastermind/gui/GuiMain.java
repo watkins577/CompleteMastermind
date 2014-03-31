@@ -23,8 +23,8 @@ import uk.me.andrewwatkins.mastermind.data.MastermindHandler;
 public class GuiMain implements MouseListener, ComponentListener {
 	
 	//Dimension constants
-	private static final int PREF_WIDTH = 800;
-	private static final int PREF_HEIGHT = 600;
+	private static final int PREF_WIDTH = 400;
+	private static final int PREF_HEIGHT = 300;
 	
 	//Game size constants
 	private static final int DEFAULT_XSIZE = 12;
@@ -50,7 +50,7 @@ public class GuiMain implements MouseListener, ComponentListener {
 	//Game panel variables
 	public MarkSlotBoard markslots;
 	public SlotBoard slots;
-	private SlotBoard codeSlots;
+	public SlotBoard codeSlots;
 	private ColourPicker picker;
 	private JButton readyButton;
 	private ColourCode curColour = ColourCode.EMPTY;
@@ -319,6 +319,10 @@ public class GuiMain implements MouseListener, ComponentListener {
 				mmHandler.setGuess(slots.getColumn(curColumn));
 				mmHandler.compare(markslots, curColumn);
 				
+				if (this.curColumn == this.xSize-1) {
+					this.mastermindPanel.remove(readyButton);
+					return;
+				}
 				curColumn++;
 				slots.setColumnCovered(curColumn, false);
 				slots.setColumnLocked(curColumn-1, true);
@@ -331,6 +335,8 @@ public class GuiMain implements MouseListener, ComponentListener {
 		if (poscol == this.ySize) {
 			this.won = true;
 			codeSlots.setColumnCovered(0, false);
+			
+			this.mastermindPanel.remove(readyButton);
 			
 			frame.repaint();
 		}

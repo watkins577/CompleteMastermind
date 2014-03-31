@@ -2,7 +2,11 @@ package uk.me.andrewwatkins.mastermind.gui;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class MarkSlotBoard extends JPanel {
@@ -43,8 +47,17 @@ public class MarkSlotBoard extends JPanel {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
+		BufferedImage image = null;
+		
+		try {
+			image = ImageIO.read(new File("src\\resources\\markslot.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		for (int i = 0; i < xSize; i++) {
-			markpieces[i].paintComponent(g);
+			markpieces[i].paintComponent(g, image);
 		}
 	}
 	

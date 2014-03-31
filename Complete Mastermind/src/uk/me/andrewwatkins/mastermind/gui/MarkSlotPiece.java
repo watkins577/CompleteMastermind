@@ -60,8 +60,7 @@ public class MarkSlotPiece extends JPanel {
 		return new Dimension(MarkSlotPiece.WIDTH, this.height);
 	}
 	
-	@Override
-	protected void paintComponent(Graphics g) {
+	protected void paintComponent(Graphics g, BufferedImage image) {
 		Graphics2D g2d = (Graphics2D) g;
 		for (int i = 0; i < size; i++) {
 			MarkSlot slot = markslots[i];
@@ -69,15 +68,8 @@ public class MarkSlotPiece extends JPanel {
 			g2d.fill(slot);
 			g2d.setColor(Color.GRAY);
 			g2d.draw(slot);
-			BufferedImage image;
-			System.out.println(new File("src\\resources\\markslot.png").getAbsolutePath());
-			try {
-				image = ImageIO.read(new File("src\\resources\\markslot.png"));
-				g2d.drawImage(image, slot.x, slot.y, null);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			//image = ImageIO.read(new File("src\\resources\\markslot.png"));
+			g2d.drawImage(image, slot.x, slot.y, null);
 		}
 	}
 	
