@@ -143,7 +143,7 @@ public class MastermindHandler {
 	}
 
 	private void nextGuess() {
-		if (this.codeLength <= 6 && this.possibleColours.size() <= 10) {
+		if (this.codeLength <= 7 && this.possibleColours.size() <= 10) {
 			knuthGuess();
 			compareKnuth(guimain.markslots, guimain.curColumn);
 		} else {
@@ -183,7 +183,7 @@ public class MastermindHandler {
 			
 			
 		} else {
-			if (this.possibleGuesses.size() > 2000) {
+			if (this.possibleGuesses.size() > 1000) {
 				this.guess = this.possibleGuesses.get(this.random.nextInt(this.possibleGuesses.size()));
 				knuthGuess = new ColourCode[this.codeLength];
 				for (int i = 0; i < this.codeLength; i++) {

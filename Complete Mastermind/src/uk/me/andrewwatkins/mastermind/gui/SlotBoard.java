@@ -4,7 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import uk.me.andrewwatkins.mastermind.data.ColourCode;
@@ -54,6 +58,15 @@ public class SlotBoard extends JPanel {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
+		BufferedImage image = null;
+		
+		try {
+			image = ImageIO.read(new File("src\\resources\\slot.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		Graphics2D g2d = (Graphics2D) g;
 		for (int i = 0; i < xSize; i++) {
 			for (int j = 0; j < ySize; j++) {
@@ -62,6 +75,8 @@ public class SlotBoard extends JPanel {
 				g2d.fill(slot);
 				g2d.setColor(slot.isSelected() ? Color.CYAN : Color.BLACK);
 				g2d.draw(slot);
+				
+				g2d.drawImage(image, slot.x, slot.y, null);
 			}
 		}
 	}
