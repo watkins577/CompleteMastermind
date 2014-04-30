@@ -143,64 +143,90 @@ public class MastermindHandler {
 	}
 
 	private void nextGuess() {
-		if (this.codeLength == 4 && this.possibleColours.size() <= 6) {
-			//this.possibleGuesses = generatePossibleGuesses(generateInitialCodes(), this.codeLength-1);
-			
+		if (this.codeLength <= 6 && this.possibleColours.size() <= 10) {
 			knuthGuess();
+			compareKnuth(guimain.markslots, guimain.curColumn);
 		} else {
 			randomGuess();
+			compare(guimain.markslots, guimain.curColumn);
 		}
 	}
 	
 	private void knuthGuess() {
+		ColourCode[] knuthGuess = null;
 		if (this.guessNum == 1) {
 			this.possibleGuesses = generatePossibleGuesses(generateInitialCodes(), this.codeLength-1);
 			this.guess = new CodeObject();
-			ColourCode[] knuthGuess = new ColourCode[this.codeLength];
-			this.guess.addColour(ColourCode.values()[1]);
-			this.guess.addColour(ColourCode.values()[1]);
-			this.guess.addColour(ColourCode.values()[2]);
-			this.guess.addColour(ColourCode.values()[2]);
-			knuthGuess[0] = ColourCode.values()[1];
-			knuthGuess[1] = ColourCode.values()[1];
-			knuthGuess[2] = ColourCode.values()[2];
-			knuthGuess[3] = ColourCode.values()[2];
+			knuthGuess = new ColourCode[this.codeLength];
+			if (this.colourLength == 1) {
+				for (int i = 0; i < this.codeLength; i++) {
+					this.guess.addColour(ColourCode.values()[1]);
+				}
+			} else if (this.codeLength == 4 && this.colourLength >= 2/* && this.colourLength <= 6*/) {
+				this.guess.addColour(ColourCode.values()[1]);
+				this.guess.addColour(ColourCode.values()[1]);
+				this.guess.addColour(ColourCode.values()[2]);
+				this.guess.addColour(ColourCode.values()[2]);
+			} else {
+				for (int i = 0; i < this.codeLength; i++) {
+					int colourCode = i+1;
+					while (colourCode > this.colourLength) {
+						colourCode -= this.colourLength;
+					}
+					this.guess.addColour(ColourCode.values()[colourCode]);
+				}
+			}
 			
-			this.guimain.slots.setColumn(this.guimain.curColumn, knuthGuess);
-			compareKnuth(guimain.markslots, guimain.curColumn);
+			for (int i = 0; i < this.codeLength; i++) {
+				knuthGuess[i] = this.guess.getColour(i);
+			}
+			
+			
 		} else {
-			ArrayList<Integer> numberRemoved = new ArrayList<Integer>();
+			if (this.possibleGuesses.size() > 2000) {
+				this.guess = this.possibleGuesses.get(this.random.nextInt(this.possibleGuesses.size()));
+				knuthGuess = new ColourCode[this.codeLength];
+				for (int i = 0; i < this.codeLength; i++) {
+					knuthGuess[i] = this.guess.getColour(i);
+				}
+			} else {
+				ArrayList<Integer> numberRemoved = new ArrayList<Integer>();
 			
-			int maxRem = 0;
-			for (int i = 0; i < this.possibleGuesses.size(); i++) {
-				int numRem = 0;
-				for (int poscoltemp = 0; poscoltemp < this.codeLength; poscoltemp++) {
-					for (int coltemp = 0; coltemp < this.codeLength; coltemp++) {
-						for (int j = 0; j < this.possibleGuesses.size(); j++) {
-							if (!checkPossible(this.possibleGuesses.get(i), poscoltemp, coltemp, this.possibleGuesses.get(j))) {
-								numRem++;
+				int maxRem = 0;
+				for (int i = 0; i < this.possibleGuesses.size(); i++) {
+					int numRem = 0;
+					for (int j = 0; j < this.possibleGuesses.size(); j++) {
+						for (int poscoltemp = 0; poscoltemp < this.codeLength; poscoltemp++) {
+							for (int coltemp = 0; coltemp < this.codeLength; coltemp++) {
+								if (!checkPossible(this.possibleGuesses.get(i), poscoltemp, coltemp, this.possibleGuesses.get(j))) {
+									numRem++;
+								}
 							}
 						}
 					}
+					maxRem = Math.max(numRem, maxRem);
+					numberRemoved.add(numRem);
 				}
-				maxRem = Math.max(numRem, maxRem);
-				numberRemoved.add(numRem);
-			}
 			
-			for (int i = 0; i < numberRemoved.size(); i++) {
-				ColourCode[] knuthGuess = new ColourCode[this.codeLength];
-				if (maxRem == numberRemoved.get(i)) {
-					this.guess = this.possibleGuesses.get(i);
+				if (maxRem == 0) {
+					return;
+				}
+			
+				for (int i = 0; i < numberRemoved.size(); i++) {
+					knuthGuess = new ColourCode[this.codeLength];
+					if (maxRem == numberRemoved.get(i)) {
+						this.guess = this.possibleGuesses.get(i);
 					
-					for (int j = 0; j < this.codeLength; j++) {
+						for (int j = 0; j < this.codeLength; j++) {
 					
-						knuthGuess[j] = this.guess.getColour(j);
+							knuthGuess[j] = this.guess.getColour(j);
+						}
+						break;
 					}
-					this.guimain.slots.setColumn(this.guimain.curColumn, knuthGuess);
-					compareKnuth(guimain.markslots, guimain.curColumn);
 				}
 			}
 		}
+		this.guimain.slots.setColumn(this.guimain.curColumn, knuthGuess);
 	}
 
 	private void compareKnuth(MarkSlotBoard markslots, int curColumn) {
@@ -237,7 +263,6 @@ public class MastermindHandler {
 				i--;
 			}
 		}
-		System.out.println(possibleGuesses);
 		code.reset();
 		
 		markslots.setSlots(curColumn, poscol, col);
@@ -307,7 +332,6 @@ public class MastermindHandler {
 		}
 		
 		this.guimain.slots.setColumn(this.guimain.curColumn, randGuess);
-		compare(guimain.markslots, guimain.curColumn);
 	}
 
 	private ArrayList<CodeObject> generateInitialCodes() {
