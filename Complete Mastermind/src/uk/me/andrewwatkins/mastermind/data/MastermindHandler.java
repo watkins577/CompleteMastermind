@@ -82,14 +82,29 @@ public class MastermindHandler {
 		
 		for (int i = 0; i < guess.length(); i++) {
 			if (guess.getColour(i) == code.getColour(i)) {
-				code.mark(i);
-				guess.mark(i);
 				poscol++;
 			}
 		}
 		
-		for (int i = 0; i < guess.length(); i++) {
+		for (int i = 0; i < this.colourLength; i++) {
+			int guessamount = 0;
+			int codeamount = 0;
 			for (int j = 0; j < code.length(); j++) {
+				if (guess.getColour(j) == ColourCode.values()[i+1]) {
+					guessamount++;
+				}
+				if (code.getColour(j) == ColourCode.values()[i+1]) {
+					codeamount++;
+				}
+			}
+			col += Math.min(guessamount, codeamount);
+		}
+		
+		col -= poscol;
+		
+		/*for (int i = 0; i < guess.length(); i++) {
+			for (int j = 0; j < code.length(); j++) {
+				for (int k = 0; k < this.colourLength; k++) {
 				if (guess.getColour(i) == code.getColour(j)) {
 					if (i == j) {
 						break;
@@ -104,7 +119,7 @@ public class MastermindHandler {
 			}
 		}
 		
-		code.reset();
+		code.reset();*/
 		
 		markslots.setSlots(curColumn, poscol, col);
 		
@@ -235,27 +250,25 @@ public class MastermindHandler {
 		
 		for (int i = 0; i < guess.length(); i++) {
 			if (guess.getColour(i) == code.getColour(i)) {
-				code.mark(i);
-				guess.mark(i);
 				poscol++;
 			}
 		}
 		
-		for (int i = 0; i < guess.length(); i++) {
+		for (int i = 0; i < this.colourLength; i++) {
+			int guessamount = 0;
+			int codeamount = 0;
 			for (int j = 0; j < code.length(); j++) {
-				if (guess.getColour(i) == code.getColour(j)) {
-					if (i == j) {
-						break;
-					}
-					if (code.isMarked(j) || guess.isMarked(i)) {
-						continue;
-					}
-					guess.mark(i);
-					code.mark(j);
-					col++;
+				if (guess.getColour(j) == ColourCode.values()[i+1]) {
+					guessamount++;
+				}
+				if (code.getColour(j) == ColourCode.values()[i+1]) {
+					codeamount++;
 				}
 			}
+			col += Math.min(guessamount, codeamount);
 		}
+		
+		col -= poscol;
 		
 		for (int i = 0; i < possibleGuesses.size(); i++) {
 			if (!checkPossible(guess, poscol, col, possibleGuesses.get(i))) {
